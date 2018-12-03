@@ -78,7 +78,7 @@ namespace Crypto_Lib
                     return null;
             }
 
-            for (int i = 0; i < output.Length; ++i)
+            for (int i = 0; i < originalContent.Length; ++i)
             {
                 int oldCharIndex = useAlphabet.IndexOf(char.ToLower(originalContent[i]));
 

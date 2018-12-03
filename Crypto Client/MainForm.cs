@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Crypto_Client.Algoritham_Forms;
 using Crypto_Lib;
 
 namespace Crypto_Client
@@ -17,6 +19,10 @@ namespace Crypto_Client
         public MainForm()
         {
             InitializeComponent();
+            Directory.CreateDirectory(@".\ToDo");
+            Directory.CreateDirectory(@".\Keys");
+            Directory.CreateDirectory(@".\Crypted");
+            Directory.CreateDirectory(@".\Decrypted");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -58,6 +64,22 @@ namespace Crypto_Client
             this.Hide();
             KnapsackForm knapsackForm = new KnapsackForm();
             knapsackForm.ShowDialog();
+            this.Close();
+        }
+
+        private void btnXXTEA_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            XXTEAForm xxteaForm = new XXTEAForm();
+            xxteaForm.ShowDialog();
+            this.Close();
+        }
+
+        private void btnSHA2_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            SHA2Form sha2Form = new SHA2Form();
+            sha2Form.ShowDialog();
             this.Close();
         }
     }

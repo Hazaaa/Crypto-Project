@@ -8,13 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using Crypto_Lib;
+using Crypto_Client.Other_Forms;
 
 namespace Crypto_Client
 {
     public partial class SimpleSubstitutionForm : Form
     {
         private CryptoService.CryptoServiceClient service;
-        private string fileForCrypt = "";
+        private SimpleSubstitutionAlgorithm simpleSubstitutionAlgorithm;
+        private string fileForCryptPath = "";
+        private string fileForCryptName = "";
         private string fileExtension = "";
         private string generated256Key = "";
         private string randomed256Key = "";
@@ -23,9 +27,7 @@ namespace Crypto_Client
         {
             InitializeComponent();
             service = new CryptoService.CryptoServiceClient();
-            Directory.CreateDirectory(@".\Keys");
-            Directory.CreateDirectory(@".\Crypt");
-            Directory.CreateDirectory(@".\Decrypt");
+            simpleSubstitutionAlgorithm = new SimpleSubstitutionAlgorithm();
         }
 
         #region Moving form without border
@@ -64,7 +66,7 @@ namespace Crypto_Client
 
         private void btnRandomKey_Click(object sender, EventArgs e)
         {
-            txbKey.Text = Encoding.ASCII.GetString(service.GenerateRandomKey(CryptoService.Algorithm.SimpleSubstitution));
+            txbKey.Text = Encoding.ASCII.GetString(simpleSubstitutionAlgorithm.GenerateRandomKey());
         }
 
         private void btnCryptText_Click(object sender, EventArgs e)
@@ -80,8 +82,8 @@ namespace Crypto_Client
             }
             byte[] textToCrypt = Encoding.ASCII.GetBytes(txbEnteredText.Text);
             byte[] key = Encoding.ASCII.GetBytes(txbKey.Text);
-            service.SetKey(key, CryptoService.Algorithm.SimpleSubstitution);
-            byte[] cryptedText = service.Crypt(textToCrypt, CryptoService.Algorithm.SimpleSubstitution);
+            simpleSubstitutionAlgorithm.SetKey(key);
+            byte[] cryptedText = simpleSubstitutionAlgorithm.Crypt(textToCrypt);
             txbCryptedDecryptedText.Text = Encoding.ASCII.GetString(cryptedText);
         }
 
@@ -99,8 +101,8 @@ namespace Crypto_Client
 
             byte[] textToDecrypt = Encoding.ASCII.GetBytes(txbEnteredText.Text);
             byte[] key = Encoding.ASCII.GetBytes(txbKey.Text);
-            service.SetKey(key, CryptoService.Algorithm.SimpleSubstitution);
-            byte[] cryptedText = service.Decrypt(textToDecrypt, CryptoService.Algorithm.SimpleSubstitution);
+            simpleSubstitutionAlgorithm.SetKey(key);
+            byte[] cryptedText = simpleSubstitutionAlgorithm.Decrypt(textToDecrypt);
             txbCryptedDecryptedText.Text = Encoding.ASCII.GetString(cryptedText);
         }
 
@@ -132,27 +134,14 @@ namespace Crypto_Client
             {
                 lblFileName.Visible = true;
                 lblFileName.Text = "File selected!";
-                fileForCrypt = ofdUploadFile.FileName;
+                fileForCryptPath = ofdUploadFile.FileName;
                 fileExtension = Path.GetExtension(ofdUploadFile.FileName);
 
-                //file = File.ReadAllBytes(ofdUploadFile.FileName);
-                //txbEnteredText.Text = Encoding.ASCII.GetString(file);
+                string[] tmpPath = fileForCryptPath.Split('\\');
+                string[] tmpName = tmpPath.Last().Split('.');
+                fileForCryptName = tmpName.First();
             }
 
-        }
-
-        private void cxbFileWatcher_CheckedChanged(object sender, EventArgs e)
-        {
-            if(cxbFileWatcher.Checked)
-            {
-                txbFileWatcher.Visible = true;
-                cxbFileWatcher.Text = "File Watcher On";
-            }
-            else
-            {
-                txbFileWatcher.Visible = false;
-                cxbFileWatcher.Text = "File Watcher Off";
-            }
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -164,10 +153,6 @@ namespace Crypto_Client
             }
 
             generated256Key = alphabet256;
-            //using (StreamWriter sw = new StreamWriter(new FileStream(@".\Keys\256key.txt", FileMode.OpenOrCreate), Encoding.UTF8))
-            //{
-            //    sw.WriteLine(alphabet256);
-            //}
 
             Random random = new Random();
             randomed256Key = new string(alphabet256.ToCharArray().OrderBy(x => random.Next()).ToArray());
@@ -186,15 +171,10 @@ namespace Crypto_Client
 
         private void btnCryptFile_Click(object sender, EventArgs e)
         {
-            //if (!File.Exists(@".\Keys\256key.txt"))
-            //{
-            //    MessageBox.Show("Key isn't generated!", "Missing key!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    return;
-            //}
-
-            if(fileForCrypt.Equals(""))
+            if(fileForCryptPath.Equals(""))
             {
                 MessageBox.Show("File isn't selected!", "Missing file!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                lblFileCryptedSaved.Visible = false;
                 return;
             }
 
@@ -202,33 +182,32 @@ namespace Crypto_Client
             byte[] fileKey = Encoding.UTF8.GetBytes(generated256Key);
             byte[] randomKey = Encoding.UTF8.GetBytes(randomed256Key);
 
-            file = File.ReadAllBytes(fileForCrypt);
+            if(generated256Key.Equals("") || randomed256Key.Equals(""))
+            {
+                MessageBox.Show("Key isn't generated", "Missing key!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            txbEnteredText.Text = Encoding.UTF8.GetString(file);
+            file = File.ReadAllBytes(fileForCryptPath);
 
             Dictionary<string, byte[]> properties = new Dictionary<string,byte[]>();
             properties.Add("alphabet256", fileKey);
             properties.Add("alphabet256Key", randomKey);
 
-            if(file == null)
-            {
-                lblFileCryptedSaved.Text = "Nothing to crypt!";
-                return;
-            }
-            else
-            {
-                service.SetAlgorithmProperties(properties);
-                byte[] cryptedFile = service.Crypt(file, CryptoService.Algorithm.SimpleSubstitution);
-                txbCryptedDecryptedText.Text = Encoding.UTF8.GetString(cryptedFile);
-                File.WriteAllBytes(@".\\Crypt\\file1", cryptedFile);
-            }
+            simpleSubstitutionAlgorithm.SetAlgorithmProperties(properties);
+            byte[] cryptedFile = simpleSubstitutionAlgorithm.Crypt(file);
+            File.WriteAllBytes(@".\\Crypted\\" + fileForCryptName + fileExtension, cryptedFile);
+
+            lblFileCryptedSaved.Visible = true;
+            lblFileCryptedSaved.Text = "File crypted!";
         }
 
         private void btnDecryptFile_Click(object sender, EventArgs e)
         {
-            if (fileForCrypt.Equals(""))
+            if (fileForCryptPath.Equals(""))
             {
                 MessageBox.Show("File isn't selected!", "Missing file!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                lblFileCryptedSaved.Visible = false;
                 return;
             }
 
@@ -236,23 +215,31 @@ namespace Crypto_Client
             byte[] fileKey = Encoding.UTF8.GetBytes(generated256Key);
             byte[] randomKey = Encoding.UTF8.GetBytes(randomed256Key);
 
-            file = File.ReadAllBytes(@".\\Crypt\\file1");
+            if (generated256Key.Equals("") || randomed256Key.Equals(""))
+            {
+                MessageBox.Show("Key isn't generated", "Missing key!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            file = File.ReadAllBytes(@".\\Crypted\\" + fileForCryptName + fileExtension);
 
             Dictionary<string, byte[]> properties = new Dictionary<string, byte[]>();
             properties.Add("alphabet256", fileKey);
             properties.Add("alphabet256Key", randomKey);
 
-            if (file == null)
+            simpleSubstitutionAlgorithm.SetAlgorithmProperties(properties);
+            byte[] decryptedFile = simpleSubstitutionAlgorithm.Decrypt(file);
+            File.WriteAllBytes(@".\\Decrypted\\" + fileForCryptName + fileExtension, decryptedFile);
+
+            lblFileDecryptedSaved.Visible = true;
+            lblFileDecryptedSaved.Text = "File decrypted!";
+        }
+
+        private void button1_Click_2(object sender, EventArgs e)
+        {
+            using (WatcherForm wf = new WatcherForm(simpleSubstitutionAlgorithm))
             {
-                lblFileCryptedSaved.Text = "Nothing to decrypt!";
-                return;
-            }
-            else
-            {
-                service.SetAlgorithmProperties(properties);
-                byte[] decryptedFile = service.Decrypt(file, CryptoService.Algorithm.SimpleSubstitution);
-                txbCryptedDecryptedText.Text = Encoding.UTF8.GetString(decryptedFile);
-                File.WriteAllBytes(@".\\Decrypt\\file1" + fileExtension, decryptedFile);
+                wf.ShowDialog();
             }
         }
     }
