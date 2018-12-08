@@ -9,71 +9,92 @@
 //------------------------------------------------------------------------------
 
 namespace Crypto_Client.CryptoService {
-    using System.Runtime.Serialization;
     
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Algorithm", Namespace="http://schemas.datacontract.org/2004/07/Crypto_Service")]
-    public enum Algorithm : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        SimpleSubstitution = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        XXTEA = 1,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        Knapsack = 2,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        SHA2 = 3,
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="CryptoService.ICryptoService")]
     public interface ICryptoService {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/SetKey", ReplyAction="http://tempuri.org/ICryptoService/SetKeyResponse")]
-        bool SetKey(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm);
+        // CODEGEN: Generating message contract since the wrapper name (FileDetails) of message FileDetails does not match the default value (UploadFile)
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/UploadFile", ReplyAction="http://tempuri.org/ICryptoService/UploadFileResponse")]
+        Crypto_Client.CryptoService.UploadReply UploadFile(Crypto_Client.CryptoService.FileDetails request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/SetKey", ReplyAction="http://tempuri.org/ICryptoService/SetKeyResponse")]
-        System.Threading.Tasks.Task<bool> SetKeyAsync(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/UploadFile", ReplyAction="http://tempuri.org/ICryptoService/UploadFileResponse")]
+        System.Threading.Tasks.Task<Crypto_Client.CryptoService.UploadReply> UploadFileAsync(Crypto_Client.CryptoService.FileDetails request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/GenerateRandomKey", ReplyAction="http://tempuri.org/ICryptoService/GenerateRandomKeyResponse")]
-        byte[] GenerateRandomKey(Crypto_Client.CryptoService.Algorithm algorithm);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/GetUploadedFilesNames", ReplyAction="http://tempuri.org/ICryptoService/GetUploadedFilesNamesResponse")]
+        string[] GetUploadedFilesNames();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/GenerateRandomKey", ReplyAction="http://tempuri.org/ICryptoService/GenerateRandomKeyResponse")]
-        System.Threading.Tasks.Task<byte[]> GenerateRandomKeyAsync(Crypto_Client.CryptoService.Algorithm algorithm);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/GetUploadedFilesNames", ReplyAction="http://tempuri.org/ICryptoService/GetUploadedFilesNamesResponse")]
+        System.Threading.Tasks.Task<string[]> GetUploadedFilesNamesAsync();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/SetIV", ReplyAction="http://tempuri.org/ICryptoService/SetIVResponse")]
-        bool SetIV(byte[] input);
+        // CODEGEN: Generating message contract since the wrapper name (FileDetails) of message FileDetails does not match the default value (DownloadFile)
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/DownloadFile", ReplyAction="http://tempuri.org/ICryptoService/DownloadFileResponse")]
+        Crypto_Client.CryptoService.FileDetails DownloadFile(Crypto_Client.CryptoService.DownloadFile request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/SetIV", ReplyAction="http://tempuri.org/ICryptoService/SetIVResponse")]
-        System.Threading.Tasks.Task<bool> SetIVAsync(byte[] input);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/DownloadFile", ReplyAction="http://tempuri.org/ICryptoService/DownloadFileResponse")]
+        System.Threading.Tasks.Task<Crypto_Client.CryptoService.FileDetails> DownloadFileAsync(Crypto_Client.CryptoService.DownloadFile request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/GenerateRandomIV", ReplyAction="http://tempuri.org/ICryptoService/GenerateRandomIVResponse")]
-        byte[] GenerateRandomIV();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/DeleteFile", ReplyAction="http://tempuri.org/ICryptoService/DeleteFileResponse")]
+        bool DeleteFile(string fileName);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/GenerateRandomIV", ReplyAction="http://tempuri.org/ICryptoService/GenerateRandomIVResponse")]
-        System.Threading.Tasks.Task<byte[]> GenerateRandomIVAsync();
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/DeleteFile", ReplyAction="http://tempuri.org/ICryptoService/DeleteFileResponse")]
+        System.Threading.Tasks.Task<bool> DeleteFileAsync(string fileName);
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="FileDetails", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class FileDetails {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/SetAlgorithmProperties", ReplyAction="http://tempuri.org/ICryptoService/SetAlgorithmPropertiesResponse")]
-        bool SetAlgorithmProperties(System.Collections.Generic.Dictionary<string, byte[]> specArguments);
+        [System.ServiceModel.MessageHeaderAttribute(Namespace="http://tempuri.org/")]
+        public string FileName;
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/SetAlgorithmProperties", ReplyAction="http://tempuri.org/ICryptoService/SetAlgorithmPropertiesResponse")]
-        System.Threading.Tasks.Task<bool> SetAlgorithmPropertiesAsync(System.Collections.Generic.Dictionary<string, byte[]> specArguments);
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        public System.IO.Stream FileStreamReader;
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/Crypt", ReplyAction="http://tempuri.org/ICryptoService/CryptResponse")]
-        byte[] Crypt(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm);
+        public FileDetails() {
+        }
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/Crypt", ReplyAction="http://tempuri.org/ICryptoService/CryptResponse")]
-        System.Threading.Tasks.Task<byte[]> CryptAsync(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm);
+        public FileDetails(string FileName, System.IO.Stream FileStreamReader) {
+            this.FileName = FileName;
+            this.FileStreamReader = FileStreamReader;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="UploadReply", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class UploadReply {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/Decrypt", ReplyAction="http://tempuri.org/ICryptoService/DecryptResponse")]
-        byte[] Decrypt(byte[] output, Crypto_Client.CryptoService.Algorithm algorithm);
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        public bool UploadSuccess;
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICryptoService/Decrypt", ReplyAction="http://tempuri.org/ICryptoService/DecryptResponse")]
-        System.Threading.Tasks.Task<byte[]> DecryptAsync(byte[] output, Crypto_Client.CryptoService.Algorithm algorithm);
+        public UploadReply() {
+        }
+        
+        public UploadReply(bool UploadSuccess) {
+            this.UploadSuccess = UploadSuccess;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="DownloadFile", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class DownloadFile {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        public string FileName;
+        
+        public DownloadFile() {
+        }
+        
+        public DownloadFile(string FileName) {
+            this.FileName = FileName;
+        }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -103,60 +124,69 @@ namespace Crypto_Client.CryptoService {
                 base(binding, remoteAddress) {
         }
         
-        public bool SetKey(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.SetKey(input, algorithm);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        Crypto_Client.CryptoService.UploadReply Crypto_Client.CryptoService.ICryptoService.UploadFile(Crypto_Client.CryptoService.FileDetails request) {
+            return base.Channel.UploadFile(request);
         }
         
-        public System.Threading.Tasks.Task<bool> SetKeyAsync(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.SetKeyAsync(input, algorithm);
+        public bool UploadFile(string FileName, System.IO.Stream FileStreamReader) {
+            Crypto_Client.CryptoService.FileDetails inValue = new Crypto_Client.CryptoService.FileDetails();
+            inValue.FileName = FileName;
+            inValue.FileStreamReader = FileStreamReader;
+            Crypto_Client.CryptoService.UploadReply retVal = ((Crypto_Client.CryptoService.ICryptoService)(this)).UploadFile(inValue);
+            return retVal.UploadSuccess;
         }
         
-        public byte[] GenerateRandomKey(Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.GenerateRandomKey(algorithm);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<Crypto_Client.CryptoService.UploadReply> Crypto_Client.CryptoService.ICryptoService.UploadFileAsync(Crypto_Client.CryptoService.FileDetails request) {
+            return base.Channel.UploadFileAsync(request);
         }
         
-        public System.Threading.Tasks.Task<byte[]> GenerateRandomKeyAsync(Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.GenerateRandomKeyAsync(algorithm);
+        public System.Threading.Tasks.Task<Crypto_Client.CryptoService.UploadReply> UploadFileAsync(string FileName, System.IO.Stream FileStreamReader) {
+            Crypto_Client.CryptoService.FileDetails inValue = new Crypto_Client.CryptoService.FileDetails();
+            inValue.FileName = FileName;
+            inValue.FileStreamReader = FileStreamReader;
+            return ((Crypto_Client.CryptoService.ICryptoService)(this)).UploadFileAsync(inValue);
         }
         
-        public bool SetIV(byte[] input) {
-            return base.Channel.SetIV(input);
+        public string[] GetUploadedFilesNames() {
+            return base.Channel.GetUploadedFilesNames();
         }
         
-        public System.Threading.Tasks.Task<bool> SetIVAsync(byte[] input) {
-            return base.Channel.SetIVAsync(input);
+        public System.Threading.Tasks.Task<string[]> GetUploadedFilesNamesAsync() {
+            return base.Channel.GetUploadedFilesNamesAsync();
         }
         
-        public byte[] GenerateRandomIV() {
-            return base.Channel.GenerateRandomIV();
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        Crypto_Client.CryptoService.FileDetails Crypto_Client.CryptoService.ICryptoService.DownloadFile(Crypto_Client.CryptoService.DownloadFile request) {
+            return base.Channel.DownloadFile(request);
         }
         
-        public System.Threading.Tasks.Task<byte[]> GenerateRandomIVAsync() {
-            return base.Channel.GenerateRandomIVAsync();
+        public System.IO.Stream DownloadFile(ref string FileName) {
+            Crypto_Client.CryptoService.DownloadFile inValue = new Crypto_Client.CryptoService.DownloadFile();
+            inValue.FileName = FileName;
+            Crypto_Client.CryptoService.FileDetails retVal = ((Crypto_Client.CryptoService.ICryptoService)(this)).DownloadFile(inValue);
+            FileName = retVal.FileName;
+            return retVal.FileStreamReader;
         }
         
-        public bool SetAlgorithmProperties(System.Collections.Generic.Dictionary<string, byte[]> specArguments) {
-            return base.Channel.SetAlgorithmProperties(specArguments);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Threading.Tasks.Task<Crypto_Client.CryptoService.FileDetails> Crypto_Client.CryptoService.ICryptoService.DownloadFileAsync(Crypto_Client.CryptoService.DownloadFile request) {
+            return base.Channel.DownloadFileAsync(request);
         }
         
-        public System.Threading.Tasks.Task<bool> SetAlgorithmPropertiesAsync(System.Collections.Generic.Dictionary<string, byte[]> specArguments) {
-            return base.Channel.SetAlgorithmPropertiesAsync(specArguments);
+        public System.Threading.Tasks.Task<Crypto_Client.CryptoService.FileDetails> DownloadFileAsync(string FileName) {
+            Crypto_Client.CryptoService.DownloadFile inValue = new Crypto_Client.CryptoService.DownloadFile();
+            inValue.FileName = FileName;
+            return ((Crypto_Client.CryptoService.ICryptoService)(this)).DownloadFileAsync(inValue);
         }
         
-        public byte[] Crypt(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.Crypt(input, algorithm);
+        public bool DeleteFile(string fileName) {
+            return base.Channel.DeleteFile(fileName);
         }
         
-        public System.Threading.Tasks.Task<byte[]> CryptAsync(byte[] input, Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.CryptAsync(input, algorithm);
-        }
-        
-        public byte[] Decrypt(byte[] output, Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.Decrypt(output, algorithm);
-        }
-        
-        public System.Threading.Tasks.Task<byte[]> DecryptAsync(byte[] output, Crypto_Client.CryptoService.Algorithm algorithm) {
-            return base.Channel.DecryptAsync(output, algorithm);
+        public System.Threading.Tasks.Task<bool> DeleteFileAsync(string fileName) {
+            return base.Channel.DeleteFileAsync(fileName);
         }
     }
 }

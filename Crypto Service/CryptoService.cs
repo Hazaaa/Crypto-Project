@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -8,136 +9,106 @@ using Crypto_Lib;
 
 namespace Crypto_Service
 {
-    public enum Algorithm
-    {
-        SimpleSubstitution,
-        XXTEA,
-        Knapsack,
-        SHA2
-    }
-
     public class CryptoService : ICryptoService
     {
-        static private SimpleSubstitutionAlgorithm simpleSubstitution = new SimpleSubstitutionAlgorithm();
+        #region Attributes
 
-        public byte[] Crypt(byte[] input, Algorithm algorithm)
+        private int blockSize = 2048;
+        private string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CloudFiles");
+
+        CryptoService()
         {
-            byte[] crypted = null;
+            Directory.CreateDirectory(folderPath);
+        }
 
-            switch (algorithm)
+        #endregion
+
+        #region Implemented Interface Functions
+
+        public bool DeleteFile(string fileName)
+        {
+            string filePath = Path.Combine(folderPath, fileName);
+
+            if (File.Exists(filePath))
             {
-                case Algorithm.SimpleSubstitution:
+                File.Delete(filePath);
+
+                if (!File.Exists(filePath))
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        public FileDetails DownloadFile(DownloadFile details)
+        {
+            var filePath = Path.Combine(folderPath, details.FileName);
+
+            // Check if file exists
+            if (!File.Exists(filePath)) return null;
+
+            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+            // Return stream
+            return new FileDetails
+            {
+                FileName = details.FileName,
+                FileStreamReader = stream
+            };
+        }
+
+        public string[] GetUploadedFilesNames()
+        {
+            return Directory.GetFiles(folderPath);
+        }
+
+        public UploadReply UploadFile(FileDetails details)
+        {
+            string filePath = Path.Combine(folderPath, details.FileName);
+            int numberOfSameFile = 0;
+
+            while (File.Exists(filePath))
+            {
+                numberOfSameFile++;
+                string[] fileNameSplited = details.FileName.Split('.');
+                filePath = Path.Combine(folderPath, fileNameSplited[0] + "[" + numberOfSameFile + "]." + fileNameSplited[1]);
+            }
+
+            using (FileStream wr = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write))
+            {
+                do
+                {
+                    byte[] buffer = new byte[blockSize];
+
+                    int bytesRead = details.FileStreamReader.Read(buffer, 0, blockSize);
+
+                    //If there is no more blocks brake while loop
+                    if (bytesRead == 0)
+                        break;
+
+                    //When last block is uploaded
+                    if (bytesRead < blockSize)
                     {
-                        crypted = CryptoService.simpleSubstitution.Crypt(input);
+                        var temp = new byte[bytesRead];
+                        Array.Copy(buffer, temp, bytesRead);
+                        buffer = temp;
                     }
-                    break;
-                case Algorithm.XXTEA:
-                    break;
-                case Algorithm.Knapsack:
-                    break;
-                case Algorithm.SHA2:
-                    break;
-                default:
-                    break;
+
+
+                    wr.Write(buffer, 0, buffer.Length);
+
+                } while (true);
             }
 
-            return crypted;
+            if (File.Exists(filePath))
+                return new UploadReply() { UploadSuccess = true };
+            else
+                return new UploadReply() { UploadSuccess = false };
         }
 
-        public byte[] Decrypt(byte[] output, Algorithm algorithm)
-        {
-            byte[] decrypted = null;
+        #endregion
 
-            switch (algorithm)
-            {
-                case Algorithm.SimpleSubstitution:
-                    {
-                        decrypted = CryptoService.simpleSubstitution.Decrypt(output);
-                    }
-                    break;
-                case Algorithm.XXTEA:
-                    break;
-                case Algorithm.Knapsack:
-                    break;
-                case Algorithm.SHA2:
-                    break;
-                default:
-                    break;
-            }
-
-            return decrypted;
-        }
-
-        public byte[] GenerateRandomIV()
-        {
-            throw new NotImplementedException();
-        }
-
-        public byte[] GenerateRandomKey(Algorithm algorithm)
-        {
-            byte[] randomKey = null;
-
-            switch (algorithm)
-            {
-                case Algorithm.SimpleSubstitution:
-                    {
-                        randomKey = simpleSubstitution.GenerateRandomKey();
-                    }
-                    break;
-                case Algorithm.XXTEA:
-                    break;
-                case Algorithm.Knapsack:
-                    break;
-                case Algorithm.SHA2:
-                    break;
-                default:
-                    break;
-            }
-
-            return randomKey;
-        }
-
-        public bool SetAlgorithmProperties(IDictionary<string, byte[]> specArguments, Algorithm algorithm)
-        {
-            switch (algorithm)
-            {
-                case Algorithm.SimpleSubstitution:
-                    CryptoService.simpleSubstitution.SetAlgorithmProperties(specArguments);
-                    break;
-                case Algorithm.XXTEA:
-                    break;
-                case Algorithm.Knapsack:
-                    break;
-                case Algorithm.SHA2:
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-
-        public bool SetIV(byte[] input)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SetKey(byte[] input, Algorithm algorithm)
-        {
-            switch (algorithm)
-            {
-                case Algorithm.SimpleSubstitution:
-                    CryptoService.simpleSubstitution.SetKey(input);
-                    break;
-                case Algorithm.XXTEA:
-                    break;
-                case Algorithm.Knapsack:
-                    break;
-                case Algorithm.SHA2:
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
     }
 }

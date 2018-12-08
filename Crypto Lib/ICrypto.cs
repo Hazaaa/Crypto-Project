@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Crypto_Lib
 {
-    interface ICrypto
+    public interface ICrypto
     {
         bool SetKey(byte[] input);
         byte[] GenerateRandomKey();

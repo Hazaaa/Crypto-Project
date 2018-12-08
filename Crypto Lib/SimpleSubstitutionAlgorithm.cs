@@ -8,9 +8,15 @@ namespace Crypto_Lib
 {
     public class SimpleSubstitutionAlgorithm : ICrypto
     {
+        #region Attributes
+
         private string key;
         private const string alphabet = "abcdefghijklmnopqrstuvwxyz";
         private string alphabet256 = "";
+
+        #endregion
+
+        #region Implemented Interface Functions
 
         public byte[] Crypt(byte[] input)
         {
@@ -34,7 +40,7 @@ namespace Crypto_Lib
                     return null;
             }
 
-            for (int i = 0; i < input.Length; ++i)
+            for (int i = 0; i < originalContent.Length; ++i)
             {
                 int oldCharIndex = useAlphabet.IndexOf(char.ToLower(originalContent[i]));
 
@@ -44,7 +50,7 @@ namespace Crypto_Lib
                     cryptedText += " ";
             }
 
-            if(alphabet256.Equals(""))
+            if (alphabet256.Equals(""))
             {
                 return Encoding.ASCII.GetBytes(cryptedText);
             }
@@ -98,11 +104,6 @@ namespace Crypto_Lib
             }
         }
 
-        public byte[] GenerateRandomIV()
-        {
-            throw new NotImplementedException();
-        }
-
         public byte[] GenerateRandomKey()
         {
             Random random = new Random();
@@ -123,11 +124,6 @@ namespace Crypto_Lib
             return true;
         }
 
-        public bool SetIV(byte[] input)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool SetKey(byte[] input)
         {
             if (input.Length > 26)
@@ -136,5 +132,22 @@ namespace Crypto_Lib
             this.key = Encoding.ASCII.GetString(input);
             return true;
         }
+
+        #endregion
+
+        #region Not Implemented Intarface Functions
+
+        public bool SetIV(byte[] input)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte[] GenerateRandomIV()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
     }
 }

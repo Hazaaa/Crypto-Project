@@ -10,12 +10,14 @@ using System.Windows.Forms;
 using System.IO;
 using Crypto_Lib;
 using Crypto_Client.Other_Forms;
+using Crypto_Client.CryptoService;
 
 namespace Crypto_Client
 {
     public partial class SimpleSubstitutionForm : Form
     {
-        private CryptoService.CryptoServiceClient service;
+        #region Attributes
+
         private SimpleSubstitutionAlgorithm simpleSubstitutionAlgorithm;
         private string fileForCryptPath = "";
         private string fileForCryptName = "";
@@ -26,30 +28,12 @@ namespace Crypto_Client
         public SimpleSubstitutionForm()
         {
             InitializeComponent();
-            service = new CryptoService.CryptoServiceClient();
             simpleSubstitutionAlgorithm = new SimpleSubstitutionAlgorithm();
         }
 
-        #region Moving form without border
-
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION = 0x2;
-
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
-        public static extern bool ReleaseCapture();
-
-        private void SimpleSubstitutionForm_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ReleaseCapture();
-                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
-
         #endregion
+
+        #region Events
 
         private void btnClose_Click(object sender, EventArgs e)
         {
@@ -80,6 +64,7 @@ namespace Crypto_Client
             {
                 return;
             }
+
             byte[] textToCrypt = Encoding.ASCII.GetBytes(txbEnteredText.Text);
             byte[] key = Encoding.ASCII.GetBytes(txbKey.Text);
             simpleSubstitutionAlgorithm.SetKey(key);
@@ -89,12 +74,12 @@ namespace Crypto_Client
 
         private void btnDecryptText_Click(object sender, EventArgs e)
         {
-            if(txbKey.Text == "")
+            if (txbKey.Text == "")
             {
                 MessageBox.Show("Key box cannot be empty!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            else if(txbEnteredText.Text == "")
+            else if (txbEnteredText.Text == "")
             {
                 return;
             }
@@ -130,6 +115,11 @@ namespace Crypto_Client
 
         private void btnUploadFile_Click(object sender, EventArgs e)
         {
+            lblGenerateFileKey.Visible = false;
+            lblFileName.Visible = false;
+            lblFileCryptedSaved.Visible = false;
+            lblFileDecryptedSaved.Visible = false;
+
             if (ofdUploadFile.ShowDialog() == DialogResult.OK)
             {
                 lblFileName.Visible = true;
@@ -149,14 +139,14 @@ namespace Crypto_Client
             string alphabet256 = "";
             for (int i = 0; i < 255; i++)
             {
-                alphabet256  += (char)i;
+                alphabet256 += (char)i;
             }
 
             generated256Key = alphabet256;
 
             Random random = new Random();
             randomed256Key = new string(alphabet256.ToCharArray().OrderBy(x => random.Next()).ToArray());
-            
+
 
             lblGenerateFileKey.Visible = true;
             if (!generated256Key.Equals(""))
@@ -171,7 +161,7 @@ namespace Crypto_Client
 
         private void btnCryptFile_Click(object sender, EventArgs e)
         {
-            if(fileForCryptPath.Equals(""))
+            if (fileForCryptPath.Equals(""))
             {
                 MessageBox.Show("File isn't selected!", "Missing file!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 lblFileCryptedSaved.Visible = false;
@@ -182,7 +172,7 @@ namespace Crypto_Client
             byte[] fileKey = Encoding.UTF8.GetBytes(generated256Key);
             byte[] randomKey = Encoding.UTF8.GetBytes(randomed256Key);
 
-            if(generated256Key.Equals("") || randomed256Key.Equals(""))
+            if (generated256Key.Equals("") || randomed256Key.Equals(""))
             {
                 MessageBox.Show("Key isn't generated", "Missing key!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -190,13 +180,30 @@ namespace Crypto_Client
 
             file = File.ReadAllBytes(fileForCryptPath);
 
-            Dictionary<string, byte[]> properties = new Dictionary<string,byte[]>();
+            Dictionary<string, byte[]> properties = new Dictionary<string, byte[]>();
             properties.Add("alphabet256", fileKey);
             properties.Add("alphabet256Key", randomKey);
 
             simpleSubstitutionAlgorithm.SetAlgorithmProperties(properties);
             byte[] cryptedFile = simpleSubstitutionAlgorithm.Crypt(file);
             File.WriteAllBytes(@".\\Crypted\\" + fileForCryptName + fileExtension, cryptedFile);
+
+            if (cxbSaveToCloud.Checked)
+            {
+                var cloudProxy = new CryptoServiceClient();
+
+                using (var stream = new FileStream(@".\\Crypted\\" + fileForCryptName + fileExtension, FileMode.Open, FileAccess.Read))
+                {
+                    bool resultOfUpload = cloudProxy.UploadFile(fileForCryptName + fileExtension, stream);
+
+                    if (resultOfUpload == true)
+                        MessageBox.Show("File uploaded to cloud!", "Successfull upload!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    else
+                        MessageBox.Show("There was error while trying to upload file!", "Error while uploading!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                cloudProxy.Close();
+            }
 
             lblFileCryptedSaved.Visible = true;
             lblFileCryptedSaved.Text = "File crypted!";
@@ -237,10 +244,37 @@ namespace Crypto_Client
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-            using (WatcherForm wf = new WatcherForm(simpleSubstitutionAlgorithm))
+            WatcherForm wf = new WatcherForm(simpleSubstitutionAlgorithm);
+            wf.Show();
+        }
+
+        private void btnCloud_Click(object sender, EventArgs e)
+        {
+            CloudForm cf = new CloudForm();
+            cf.Show();
+        }
+
+        #region Moving form without border
+
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION = 0x2;
+
+        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [System.Runtime.InteropServices.DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        private void SimpleSubstitutionForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
             {
-                wf.ShowDialog();
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
         }
+
+        #endregion
+
+        #endregion
     }
 }

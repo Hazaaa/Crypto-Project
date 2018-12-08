@@ -20,7 +20,6 @@ namespace Crypto_Client
         {
             InitializeComponent();
             Directory.CreateDirectory(@".\ToDo");
-            Directory.CreateDirectory(@".\Keys");
             Directory.CreateDirectory(@".\Crypted");
             Directory.CreateDirectory(@".\Decrypted");
         }

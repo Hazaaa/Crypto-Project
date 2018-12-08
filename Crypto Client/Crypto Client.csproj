@@ -60,22 +60,28 @@
     <Compile Include="Algoritham Forms\XXTEAForm.Designer.cs">
       <DependentUpon>XXTEAForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Connected Services\CryptoService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Algoritham Forms\KnapsackForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Algoritham Forms\KnapsackForm.Designer.cs">
       <DependentUpon>KnapsackForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\CryptoService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Other Forms\CloudForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Other Forms\CloudForm.Designer.cs">
+      <DependentUpon>CloudForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Other Forms\WatcherForm.cs">
       <SubType>Form</SubType>
@@ -103,6 +109,9 @@
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Other Forms\CloudForm.resx">
+      <DependentUpon>CloudForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Other Forms\WatcherForm.resx">
       <DependentUpon>WatcherForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -121,7 +130,13 @@
     <None Include="Connected Services\CryptoService\Arrays.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Connected Services\CryptoService\Crypto_Service.xsd">
+    <None Include="Connected Services\CryptoService\Crypto_Client.CryptoService.FileDetails.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\CryptoService\Crypto_Client.CryptoService.UploadReply.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\CryptoService\Message.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\CryptoService\service.wsdl" />
@@ -168,6 +183,5 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,103 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import namespace="http://schemas.datacontract.org/2004/07/Crypto_Service" />
+  <xs:import namespace="http://schemas.microsoft.com/Message" />
   <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
-  <xs:element name="SetKey">
+  <xs:element name="FileDetails">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="input" nillable="true" type="xs:base64Binary" />
-        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Crypto_Service" minOccurs="0" name="algorithm" type="q1:Algorithm" />
+        <xs:element xmlns:q1="http://schemas.microsoft.com/Message" name="FileStreamReader" type="q1:StreamBody" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="SetKeyResponse">
+  <xs:element name="FileName" nillable="true" type="xs:string" />
+  <xs:element name="UploadReply">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="SetKeyResult" type="xs:boolean" />
+        <xs:element minOccurs="0" name="UploadSuccess" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="GenerateRandomKey">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Crypto_Service" minOccurs="0" name="algorithm" type="q2:Algorithm" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GenerateRandomKeyResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="GenerateRandomKeyResult" nillable="true" type="xs:base64Binary" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="SetIV">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="input" nillable="true" type="xs:base64Binary" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="SetIVResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="SetIVResult" type="xs:boolean" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="GenerateRandomIV">
+  <xs:element name="GetUploadedFilesNames">
     <xs:complexType>
       <xs:sequence />
     </xs:complexType>
   </xs:element>
-  <xs:element name="GenerateRandomIVResponse">
+  <xs:element name="GetUploadedFilesNamesResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="GenerateRandomIVResult" nillable="true" type="xs:base64Binary" />
+        <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="GetUploadedFilesNamesResult" nillable="true" type="q2:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="SetAlgorithmProperties">
+  <xs:element name="DownloadFile">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="specArguments" nillable="true" type="q3:ArrayOfKeyValueOfstringbase64Binary" />
+        <xs:element minOccurs="0" name="FileName" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="SetAlgorithmPropertiesResponse">
+  <xs:element name="DeleteFile">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="SetAlgorithmPropertiesResult" type="xs:boolean" />
+        <xs:element minOccurs="0" name="fileName" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Crypt">
+  <xs:element name="DeleteFileResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" name="input" nillable="true" type="xs:base64Binary" />
-        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Crypto_Service" minOccurs="0" name="algorithm" type="q4:Algorithm" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="CryptResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="CryptResult" nillable="true" type="xs:base64Binary" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="Decrypt">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="output" nillable="true" type="xs:base64Binary" />
-        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Crypto_Service" minOccurs="0" name="algorithm" type="q5:Algorithm" />
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-  <xs:element name="DecryptResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element minOccurs="0" name="DecryptResult" nillable="true" type="xs:base64Binary" />
+        <xs:element minOccurs="0" name="DeleteFileResult" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

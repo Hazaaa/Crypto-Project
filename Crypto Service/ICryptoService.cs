@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -11,47 +12,43 @@ namespace Crypto_Service
     public interface ICryptoService
     {
         [OperationContract]
-        bool SetKey(byte[] input, Algorithm algorithm);
+        UploadReply UploadFile(FileDetails details);
 
         [OperationContract]
-        byte[] GenerateRandomKey(Algorithm algorithm);
+        string[] GetUploadedFilesNames();
 
         [OperationContract]
-        bool SetIV(byte[] input);
+        FileDetails DownloadFile(DownloadFile details);
 
         [OperationContract]
-        byte[] GenerateRandomIV();
-
-        [OperationContract]
-        bool SetAlgorithmProperties(IDictionary<string, byte[]> specArguments, Algorithm algorithm);
-
-        [OperationContract]
-        byte[] Crypt(byte[] input, Algorithm algorithm);
-
-        [OperationContract]
-        byte[] Decrypt(byte[] output, Algorithm algorithm);
+        bool DeleteFile(string fileName);
     }
 
-    // Use a data contract as illustrated in the sample below to add composite types to service operations.
-    // You can add XSD files into the project. After building the project, you can directly use the data types defined there, with the namespace "Crypto_Service.ContractType".
-    //[DataContract]
-    //public class CompositeType
-    //{
-    //    bool boolValue = true;
-    //    string stringValue = "Hello ";
+    [MessageContract]
+    public class UploadReply
+    {
+        [MessageBodyMember] public bool UploadSuccess;
+    }
 
-    //    [DataMember]
-    //    public bool BoolValue
-    //    {
-    //        get { return boolValue; }
-    //        set { boolValue = value; }
-    //    }
+    [MessageContract]
+    public class FileDetails : IDisposable
+    {
+        [MessageHeader(MustUnderstand = true)] public string FileName;
 
-    //    [DataMember]
-    //    public string StringValue
-    //    {
-    //        get { return stringValue; }
-    //        set { stringValue = value; }
-    //    }
-    //}
+        [MessageBodyMember(Order = 1)] public System.IO.Stream FileStreamReader;
+
+        public void Dispose()
+        {
+            //To be sure that stream is closed on server side
+            if (FileStreamReader == null) return;
+            FileStreamReader.Close();
+            FileStreamReader = null;
+        }
+    }
+
+    [MessageContract]
+    public class DownloadFile
+    {
+        [MessageBodyMember] public string FileName;
+    }
 }
